@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>自定义new与instanceof工具函数</title>
+  </head>
+  <body>
+    <script>
+      /* 
+    1. 自定义new工具函数
+        语法: newInstance(Fn, ...args)
+        功能: 创建Fn构造函数的实例对象
+        实现: 创建空对象obj, 调用Fn指定this为obj, 返回obj
+    2. 自定义instanceof工具函数
+        语法: myInstanceOf(obj, Type)
+        功能: 判断obj是否是Type类型的实例
+        实现: Type的原型对象是否是obj的原型链上的某个对象, 如果是返回tru, 否则返回false
+    */
+    </script>
+    <!-- <script src="./node_modules/atguigu-utils/dist/atguigu-utils.js"></script> -->
+    <script type="text/javascript">
+      // -----------------------------------实现一个与new功能相同的函数;
+      function newInstance(Fn, ...args) {
+        // 创建一个新对象  obj的原型对象的constructor默认是Object
+        const obj = {};
+        // 修正原型对象的constructor属性，让他指向当前构造函数
+        obj.__proto__.constructor = Fn;
+        // 通过新对象去调用构造函数（作为对象的方法去调用） 改变this指向
+        const result = Fn.call(obj, ...args);
+        // 如果执行的结果是对象类型，那最终返回他
+        if (result instanceof Object) {
+          return result;
+        }
+        // 返回对象
+        return obj;
+      }
+      // ----------------------------------------自定义instanceof工具函数
+      function myInstanceOf(obj, Type) {
+        // 得到obj的隐式原型对象
+        let protoObject = obj.__proto__;
+        // 只要原型对象存在，就需要再次进行判断
+        while (protoObject) {
+          // 判断出了原型对象就是obj原型链上的某个显示原型对象，直接返回true
+          if (protoObject === Type.prototype) {
+            return true;
+          }
+          // 继续取出显示原型对象的隐式原型对象
+          protoObject = protoObject.__proto__;
+        }
+        // 整体原型连上的对象都不满足，没有匹配得，返回false
+        return false;
+      }
+    </script>
+    <script>
+      function Person(name, age) {
+        this.name = name;
+        this.age = age;
+        return {};
+        // return []
+        // return function (){}
+        // return 1
+        // return undefined
+      }
+
+      const p = new Person("tom", 12);
+      console.log(p);
+
+      const p2 = newInstance(Person, "Jack", 13);
+      console.log(p2, p2.constructor);
+    </script>
+    <script>
+      console.log(myInstanceOf(p, Object));
+      console.log(myInstanceOf(p, Person));
+      console.log(myInstanceOf(myInstanceOf, Function));
+      console.log(myInstanceOf(p, String), myInstanceOf(p, Function));
+    </script>
+  </body>
+</html>

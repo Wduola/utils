@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>数组去重</title>
+  </head>
+
+  <body>
+    <!-- 
+    1). 理解: 
+        创建一个不重复的数组副本, 只有首次出现的元素才会被保留
+        如: uniq([2, 3, 2, 7, 6, 7]) ==> [2, 3, 7, 6]
+    2). 实现:
+        方法1: 利用forEach()和indexOf()
+               说明: 本质是双重遍历, 效率差些
+        方法2: 利用forEach() + 对象容器
+               说明: 只需一重遍历, 效率高些
+        方法3: 利用ES6语法: from + Set 或者 ... + Set
+               说明: 编码简洁
+  -->
+    <!-- <script src="./node_modules/atguigu-utils/dist/atguigu-utils.js"></script> -->
+    <script type="text/javascript">
+      const aUtils = {
+        // -----------------------方法1: 利用forEach()和indexOf()
+        unique1(arr) {
+          // 新建一个空数组，保存数组元素
+          const array = [];
+          // forEach遍历数组
+          arr.forEach((item) => {
+            // 判断每个元素和空数组中作比较，不存在的添加进去
+            // includes() 方法用来判断一个数组是否包含一个指定的值，根据情况，如果包含则返回 true，否则返回false。
+            if (!array.includes(item)) {
+              array.push(item);
+            }
+          });
+          // 返回新数组
+          return array;
+        },
+        // -----------------------方法2: 利用forEach() + 对象容器
+        unique2(arr) {
+          const array = [];
+          // 辅助判断元素是否存在的对象容器
+          const container = {};
+          arr.forEach((item) => {
+            // hasOwnProperty() 方法会返回一个布尔值，指示对象自身属性中是否具有指定的属性（也就是，是否有指定的键）
+            // 判断对象容器中是否有该元素，没有的添加进空数组
+            if (!container.hasOwnProperty(item)) {
+              // 把容器中存才的元素值改为true
+              container[item] = true;
+              array.push(item);
+            }
+          });
+          return array;
+        },
+        // -----------------------方法3: 利用ES6语法: from + Set 或者 ... + Set
+        // Set 对象允许你存储任何类型的唯一值，无论是原始值或者是对象引用。
+        unique3(arr) {
+          return [...new Set(arr)];
+        },
+      };
+    </script>
+    <script>
+      console.log(aUtils.unique1([2, 3, 2, 7, 6, 7])); //[2, 3, 7, 6]
+      console.log(aUtils.unique2([2, 3, 2, 7, 6, 7])); //[2, 3, 7, 6]
+      console.log(aUtils.unique3([2, 3, 2, 7, 6, 7])); //[2, 3, 7, 6]
+    </script>
+  </body>
+</html>
